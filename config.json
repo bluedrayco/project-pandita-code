@@ -1,0 +1,19 @@
+{
+    "images":{
+        "fotos":{
+            "start":1,
+            "end":110,
+            "exclude":[]
+        },
+        "shrek":{
+            "start":1,
+            "end":5,
+            "exclude":[]
+        }
+    },
+    "mp3":{
+        "start":1,
+        "end":44,
+        "exclude":[]        
+    }
+}

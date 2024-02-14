@@ -1,8 +1,10 @@
 from lcd.ST7735 import TFT,TFTColor
+from machine import SPI,Pin
+from httpclient import HttpClient
 
 class Catalog:
         
-    def __init__(self,repo:str,start:int,end:int,exclude:list):
+    def __init__(self,http:HttpClient,repoURL:str,start:int,end:int,exclude:list):
         spi = SPI(2, baudrate=20000000, polarity=0, phase=0, sck=Pin(18), mosi=Pin(23), miso=Pin(13))
         self.__tft=TFT(spi,4,22,5)
         self.__tft.initr()
@@ -13,10 +15,11 @@ class Catalog:
         self.__end=end
         self.__exclude=exclude
         self.__cursor=start
-        self.__repo=repo
+        self.__repoURL=repoURL
+        self.__client=http
         
-    def __printImage(self)->None:
-        f=open("photo.bmp", 'rb')
+    def printImage(self)->None:
+        f=open("fotos/1.bmp", 'rb')
         if f.read(2) == b'BM':  #header
             dummy = f.read(8) #file size(4), creator bytes(4)
             offset = int.from_bytes(f.read(4), 'little')
@@ -53,7 +56,7 @@ class Catalog:
         
     def next(self):
         if self.__cursor not in self.__exclude:
-            self.__downloadImage(f"{self.__cursor}.bmp")
+            self.__downloadImage(f"{self.__repoURL}/{self.__cursor}.bmp")
         self.__printImage()
         self.__cursor = self.__cursor + 1 if self.__cursor <= self.__end else self.__start
     
