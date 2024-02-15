@@ -5,13 +5,21 @@ from machine import Pin,SPI
 from lcd.fonts import sysfont
 import math
 
+start_mp3=1
+end_mp3=44
+step_mp3=start_mp3
+
+start_fotos=1
+end_fotos=7
+step_fotos=start_fotos
+time_fotos=5000
 
 df=DFPlayer(uart_id=2)
-print("empéce")
+print("empezo")
 time.sleep(0.2)
 df.volume(25)
 time.sleep(0.2)
-df.play(1,1)
+df.play(1,step_mp3)
 time.sleep(1)
 print(df.is_playing())
 
@@ -21,55 +29,32 @@ tft=TFT(spi,4,22,5)
 tft.initr()
 tft.rgb(True)
 
-def tftprinttest():
-    tft.fill(TFT.BLACK);
-    v = 30
-    tft.text((0, v), "Hello World!", TFT.RED, sysfont, 1, nowrap=True)
-    v += sysfont["Height"]
-    tft.text((0, v), "Hello World!", TFT.YELLOW, sysfont, 2, nowrap=True)
-    v += sysfont["Height"] * 2
-    tft.text((0, v), "Hello World!", TFT.GREEN, sysfont, 3, nowrap=True)
-    v += sysfont["Height"] * 3
-    tft.text((0, v), str(1234.567), TFT.BLUE, sysfont, 4, nowrap=True)
-    time.sleep_ms(1500)
-    tft.fill(TFT.BLACK);
-    v = 0
-    tft.text((0, v), "Hello World!", TFT.RED, sysfont)
-    v += sysfont["Height"]
-    tft.text((0, v), str(math.pi), TFT.GREEN, sysfont)
-    v += sysfont["Height"]
-    tft.text((0, v), " Want pi?", TFT.GREEN, sysfont)
-    v += sysfont["Height"] * 2
-    tft.text((0, v), hex(8675309), TFT.GREEN, sysfont)
-    v += sysfont["Height"]
-    tft.text((0, v), " Print HEX!", TFT.GREEN, sysfont)
-    v += sysfont["Height"] * 2
-    tft.text((0, v), "Sketch has been", TFT.WHITE, sysfont)
-    v += sysfont["Height"]
-    tft.text((0, v), "running for: ", TFT.WHITE, sysfont)
-    v += sysfont["Height"]
-    tft.text((0, v), str(time.ticks_ms() / 1000), TFT.PURPLE, sysfont)
-    v += sysfont["Height"]
-    tft.text((0, v), " seconds.", TFT.WHITE, sysfont)
-
-def test_main():
-    tft.rotation(0)
-    tft.fill(TFT.BLACK)
-    tft.text((0, 0), "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", TFT.WHITE, sysfont, 1)
-    time.sleep_ms(1000)
-
-    tftprinttest()
-    time.sleep_ms(4000)
-
-
 #test_main()
 #time.sleep(2)
-
+v = 0
+tiempoTexto=5000
 tft.fill(TFT.BLACK)
+tft.text((0, v), "Gracias porsiempre    apoyarme,  creer en miy ver en   mi interiorlo que     otros no   ven en mi", TFT.WHITE, sysfont, 2, nowrap=False)
+time.sleep_ms(tiempoTexto)
+tft.fill(TFT.BLACK)
+tft.text((0, v), "Gracias porser mi     companera  de vida y  tener      grandes    aventuras  juntos", TFT.GREEN, sysfont, 2, nowrap=False)
+time.sleep_ms(tiempoTexto)
+tft.fill(TFT.BLACK)
+tft.text((0, v), "Gracias porque juntos estamos    formando   una hermosafamilia", TFT.FOREST, sysfont, 2, nowrap=False)
+time.sleep_ms(tiempoTexto)
+tft.fill(TFT.BLACK)
+tft.text((0, v), "Este       pequeno    proyecto espara       demostrartetodo lo quesignificas para mi", TFT.YELLOW, sysfont, 2, nowrap=False)
+time.sleep_ms(tiempoTexto)
+tft.fill(TFT.BLACK)
+tft.text((0, v), "Gracias mi amor por   estar todo este tiempoa mi lado             Te ama           tu BB", TFT.RED, sysfont, 2, nowrap=False)
+time.sleep_ms(tiempoTexto)
 
 
-for i in [1,2,3,4,5]:
-    f=open(f"fotos/{i}.bmp", 'rb')
+while True:
+    tft.fill(TFT.BLACK)
+    filePath=f"fotos/{step_fotos}.bmp"
+    print(filePath)
+    f=open(filePath, 'rb')
     if f.read(2) == b'BM':  #header
         dummy = f.read(8) #file size(4), creator bytes(4)
         offset = int.from_bytes(f.read(4), 'little')
@@ -100,5 +85,8 @@ for i in [1,2,3,4,5]:
                     for col in range(w):
                         bgr = f.read(3)
                         tft._pushcolor(TFTColor(bgr[2],bgr[1],bgr[0]))
-
-    time.sleep(2)
+    time.sleep_ms(time_fotos)
+    step_fotos=step_fotos+1 if step_fotos<end_fotos else start_fotos
+    if not df.is_playing():
+        step_mp3=step_mp3+1 if step_mp3<end_mp3 else start_mp3
+        df.play(1,step_mp3)
